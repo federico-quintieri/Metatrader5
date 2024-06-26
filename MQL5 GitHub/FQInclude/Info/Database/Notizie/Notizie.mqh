@@ -217,3 +217,34 @@ void CNotizie::UpdateDatabase(string valuta, datetime from)
      }
   }
 //+------------------------------------------------------------------+
+//Riformattare
+int RitornaRecordInt(int database_handle, string table_name, string colonna_condizione, string colonna_risultato)
+{
+   // Convertiamo `timecurrent` in una stringa adatta per la query SQL
+   string timecurrent_str = TimeToString(TimeCurrent(), TIME_DATE | TIME_MINUTES);
+   
+   // Facciamo la QUERY
+   string sql = "SELECT " + colonna_risultato + " FROM " + table_name + 
+                " WHERE " + colonna_condizione + " <= '" + timecurrent_str + 
+                "' ORDER BY " + colonna_condizione + " DESC LIMIT 1";
+   
+   Print("SQL Query: ", sql); // Aggiungi un print per controllare la query SQL generata
+
+   int request = DatabasePrepare(database_handle, sql);
+
+   if (request == INVALID_HANDLE)
+   {
+      Print("DB: richiesta per ottenere l'ultimo record fallita con codice ", GetLastError());
+      return 0;
+   }
+
+   int ultimo_record = 0;
+
+   if (DatabaseRead(request))
+   {
+      DatabaseColumnInteger(request, 0, ultimo_record);
+   }
+
+   DatabaseFinalize(request);
+   return ultimo_record;
+}
