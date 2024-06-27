@@ -30,6 +30,14 @@ enum ENUM_VALUTA
    ZAR  //Rand sudafricano
   };
 
+struct InfoNotizia
+  {
+   datetime          data;
+   double            attuale;
+   double            previsto;
+   double            precedente;
+  };
+
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -49,6 +57,11 @@ public:
    int               RetrieveCalendarValues(string valuta, datetime from, MqlCalendarValue& out_values[]);
    void              ProcessCalendarEvent(int handle, string valuta, MqlCalendarEvent& event, MqlCalendarValue& value);
    void              UpdateDatabase(string valuta,datetime from);
+   InfoNotizia       UltimaNotizia(int database_handle,string table_name);
+   string            QueryAttuale(string time_current,string table_name);
+   string            QueryData(string time_current,string table_name);
+   string            QueryPrecedente(string time_current,string table_name);
+   string            QueryPrevisto(string time_current,string table_name);
 
   };
 //+------------------------------------------------------------------+
@@ -217,34 +230,67 @@ void CNotizie::UpdateDatabase(string valuta, datetime from)
      }
   }
 //+------------------------------------------------------------------+
-//Riformattare
-int RitornaRecordInt(int database_handle, string table_name, string colonna_condizione, string colonna_risultato)
-{
-   // Convertiamo `timecurrent` in una stringa adatta per la query SQL
-   string timecurrent_str = TimeToString(TimeCurrent(), TIME_DATE | TIME_MINUTES);
-   
-   // Facciamo la QUERY
-   string sql = "SELECT " + colonna_risultato + " FROM " + table_name + 
-                " WHERE " + colonna_condizione + " <= '" + timecurrent_str + 
-                "' ORDER BY " + colonna_condizione + " DESC LIMIT 1";
-   
-   Print("SQL Query: ", sql); // Aggiungi un print per controllare la query SQL generata
+InfoNotizia CNotizie::UltimaNotizia(int database_handle, string table_name)
+  {
+// Convertiamo `timecurrent` in una stringa adatta per la query SQL
+   string time_current = TimeToString(TimeCurrent(), TIME_DATE | TIME_MINUTES);
+   InfoNotizia struttura;
 
-   int request = DatabasePrepare(database_handle, sql);
+   string query[]=
+     {
+      QueryData(time_current,table_name),
+      QueryAttuale(time_current,table_name),
+      QueryPrecedente(time_current,table_name),
+      QueryPrevisto(time_current,table_name)
+     };
 
-   if (request == INVALID_HANDLE)
-   {
-      Print("DB: richiesta per ottenere l'ultimo record fallita con codice ", GetLastError());
-      return 0;
-   }
+   struttura.data=(datetime)RitornaStringa(database_handle,query[0]);
+   struttura.attuale = RitornaInteger(database_handle,query[1]);
+   struttura.precedente = RitornaInteger(database_handle,query[2]);
+   struttura.previsto = RitornaInteger(database_handle,query[3]);
 
-   int ultimo_record = 0;
+   return struttura;
+  }
+//+------------------------------------------------------------------+
+string CNotizie::QueryAttuale(string time_current,string table_name)
+  {
+   string sql = "SELECT Attuale FROM " + table_name +
+                " WHERE Data <= '" + time_current +
+                "' ORDER BY Data DESC LIMIT 1";
 
-   if (DatabaseRead(request))
-   {
-      DatabaseColumnInteger(request, 0, ultimo_record);
-   }
+   return sql;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+string CNotizie::QueryData(string time_current,string table_name)
+  {
+   string sql = "SELECT Data FROM " + table_name +
+                " WHERE Data <= '" + time_current +
+                "' ORDER BY Data DESC LIMIT 1";
 
-   DatabaseFinalize(request);
-   return ultimo_record;
-}
+   return sql;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+string CNotizie::QueryPrecedente(string time_current,string table_name)
+  {
+   string sql = "SELECT Precedente FROM " + table_name +
+                " WHERE Data <= '" + time_current +
+                "' ORDER BY Data DESC LIMIT 1";
+
+   return sql;
+  }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+string CNotizie::QueryPrevisto(string time_current,string table_name)
+  {
+   string sql = "SELECT Previsto FROM " + table_name +
+                " WHERE Data <= '" + time_current +
+                "' ORDER BY Data DESC LIMIT 1";
+
+   return sql;
+  }
+//+------------------------------------------------------------------+
