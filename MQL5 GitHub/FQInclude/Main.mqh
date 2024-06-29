@@ -14,4 +14,7 @@
 #include <FQInclude\Info\Gestione\Trailing\Trailing.mqh>            // Libreria per gestire i trailing stop
 #include <FQInclude\Info\Database\Notizie\Notizie.mqh>              // Libreria per gestire le notizie nel database 
 #include <FQInclude\Info\Database\Andamento\Andamento.mqh>          // Libreria per gestire il database dell'andamento 
+#include <FQInclude\Segnali\Tipo\PatternDiPrezzo.mqh>               // Libreria per gestire i segnali sui pattern di prezzo 
+#include <FQInclude\Segnali\Tipo\DeviazioneStandard.mqh>            // Libreria per gestire i segnali sulla deviazione standard       
+#include <FQInclude\Segnali\Tipo\BandeDiBollinger.mqh>              // Libreria per gestire i segnali sulle bande di bollinger
 //+------------------------------------------------------------------+
