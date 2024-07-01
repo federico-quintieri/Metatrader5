@@ -17,4 +17,5 @@
 #include <FQInclude\Segnali\Tipo\PatternDiPrezzo.mqh>               // Libreria per gestire i segnali sui pattern di prezzo 
 #include <FQInclude\Segnali\Tipo\DeviazioneStandard.mqh>            // Libreria per gestire i segnali sulla deviazione standard       
 #include <FQInclude\Segnali\Tipo\BandeDiBollinger.mqh>              // Libreria per gestire i segnali sulle bande di bollinger
+#include <FQInclude\Segnali\Tipo\Tendenza.mqh>                      // Libreria per gestire i segnali sulla tendenza del prezzo
 //+------------------------------------------------------------------+
