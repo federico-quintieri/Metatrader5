@@ -12,29 +12,14 @@
 class CDevazioneStandard : public CSegnaliMain
   {
 
+private:
+   double            GetMaxDeviation(CiStdDev *OBDev, int start, int end);
+
 public:
    bool              ContrazioneVolatilitaRange(double RangeInPunti, int TotaleCandeleMassimo, string symbol, ENUM_TIMEFRAMES period, int ma_period, int ma_shift, ENUM_MA_METHOD ma_method, int applied);
    bool              EspansioneVolatilitaRange(double RangeInPunti, int TotaleCandeleMassimo, string symbol, ENUM_TIMEFRAMES period, int ma_period, int ma_shift, ENUM_MA_METHOD ma_method, int applied);
    bool              ContrazioneVolatilitaPercentuale(double Percentuale, int Primo_Massimo, int Secondo_Massimo, string symbol, ENUM_TIMEFRAMES period, int ma_period, int ma_shift, ENUM_MA_METHOD ma_method, int applied);
-   bool              Butterfly(double Percentuale,string symbol, ENUM_TIMEFRAMES period, int ma_period, int ma_shift,ENUM_MA_METHOD ma_method, int applied);
-
-private:
-   CiStdDev*         CreateStdDevIndicator(string symbol, ENUM_TIMEFRAMES period, int ma_period, int ma_shift, ENUM_MA_METHOD ma_method, int applied, int bufferSize);
-   double            GetMaxDeviation(CiStdDev *OBDev, int start, int end);
-   void              DeleteStdDevIndicator(CiStdDev *OBDev);
   };
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-CiStdDev* CDevazioneStandard::CreateStdDevIndicator(string symbol, ENUM_TIMEFRAMES period, int ma_period, int ma_shift, ENUM_MA_METHOD ma_method, int applied, int bufferSize)
-  {
-   CiStdDev *OBDev = new CiStdDev();
-   OBDev.Create(symbol, period, ma_period, ma_shift, ma_method, applied);
-   OBDev.BufferResize(bufferSize + 1);
-   OBDev.Refresh(-1);
-   return OBDev;
-  }
-
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -51,15 +36,6 @@ double CDevazioneStandard::GetMaxDeviation(CiStdDev *OBDev, int start, int end)
    return maxDeviation;
   }
 
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-void CDevazioneStandard::DeleteStdDevIndicator(CiStdDev *OBDev)
-  {
-   delete OBDev;
-  }
-
-//+------------------------------------------------------------------+
 bool CDevazioneStandard::ContrazioneVolatilitaRange(double RangeInPunti, int TotaleCandeleMassimo, string symbol, ENUM_TIMEFRAMES period, int ma_period, int ma_shift, ENUM_MA_METHOD ma_method, int applied)
   {
    CiStdDev *OBDev = CreateStdDevIndicator(symbol, period, ma_period, ma_shift, ma_method, applied, TotaleCandeleMassimo);
@@ -127,36 +103,6 @@ bool CDevazioneStandard::ContrazioneVolatilitaPercentuale(double Percentuale, in
         }
 
       if(Massimo_Lontano - (Massimo_Lontano * Percentuale) > Massimo_Recente)
-        {
-         DeleteStdDevIndicator(OBDev);
-         return true;
-        }
-     }
-
-   DeleteStdDevIndicator(OBDev);
-   return false;
-  }
-//+------------------------------------------------------------------+
-bool CDevazioneStandard::Butterfly(double Percentuale, string symbol, ENUM_TIMEFRAMES period, int ma_period, int ma_shift, ENUM_MA_METHOD ma_method, int applied)
-  {
-   Percentuale /= 100;
-
-   const int bufferSize = 50;
-   CiStdDev *OBDev = CreateStdDevIndicator(symbol, period, ma_period, ma_shift, ma_method, applied, bufferSize);
-
-   double max1 = 0.0, max2 = 0.0, max3 = 0.0, max4 = 0.0;
-
-   if(OBDev.Main(0) != OBDev.Main(1))
-     {
-      max1 = GetMaxDeviation(OBDev, 0, 3);
-      max2 = GetMaxDeviation(OBDev, 3, 20);
-      max3 = GetMaxDeviation(OBDev, 20, 23);
-      max4 = GetMaxDeviation(OBDev, 23, 43);
-
-      bool prima_contrazione = NormalizeDouble(max1 < (max2 - (max2 * Percentuale)), Digits());
-      bool seconda_contrazione = NormalizeDouble(max3 < (max4 - (max4 * Percentuale)), Digits());
-
-      if(prima_contrazione && seconda_contrazione)
         {
          DeleteStdDevIndicator(OBDev);
          return true;
