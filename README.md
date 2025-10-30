@@ -21,7 +21,6 @@ Entra nella cartella MQL5
 📸 Ecco come dovrebbe apparire:
 <img width="688" height="570" alt="Apri Cartella Dati" src="https://github.com/user-attachments/assets/3325b3f0-c263-47e2-9e3c-92f7ecb758a3" />
 <img width="652" height="366" alt="Cartella MQL5" src="https://github.com/user-attachments/assets/2d75bc72-c229-4128-8722-a0bae022df1b" />
-<img width="866" height="431" alt="Struttura cartelle" src="https://github.com/user-attachments/assets/7d023073-714c-46b1-820f-5bd2f88dba27" />
 
 ### 3️⃣ Copia i file
 
@@ -30,6 +29,10 @@ Copia i file scaricati nelle rispettive cartelle:
 Expert Advisors → MQL5/Experts
 
 Indicatori → MQL5/Indicators
+
+Include → FQInclude
+
+<img width="866" height="431" alt="Struttura cartelle" src="https://github.com/user-attachments/assets/7d023073-714c-46b1-820f-5bd2f88dba27" />
 
 ### 4️⃣ Aggiorna la piattaforma
 
