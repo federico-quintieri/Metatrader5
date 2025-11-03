@@ -54,4 +54,4 @@ Ora troverai i nuovi Expert Advisors e Indicatori direttamente nel tuo Navigator
 ### 💬 Hai bisogno di aiuto?
 
 Se riscontri problemi o vuoi condividere idee, entra nella nostra community Discord:
-👉 (inserisci qui il link del tuo server)
+👉 https://www.federicoquintieri.com/accesso-mql5-discord
